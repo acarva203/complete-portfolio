@@ -1,0 +1,227 @@
+---
+import Notebook from '../layouts/Notebook.astro';
+import { getCollection } from 'astro:content';
+import { experience } from '../data/experience';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const featured = projects.find((p) => p.data.featured) ?? projects[0];
+const restProjects = projects.filter((p) => p.id !== featured?.id);
+
+const catCode: Record<string, string> = {
+  'AI / ML': 'AI',
+  'Data Science': 'DS',
+  Product: 'PM',
+  Design: 'DES',
+  Engineering: 'ENG',
+};
+const idFor = (cats: string[], n: number) =>
+  `${catCode[cats[0]] ?? 'SR'}·${String(n).padStart(3, '0')}`;
+
+// Hero statement → word spans for the pinned grey→ink scroll scrub.
+const heroSegments: { t: string; bold: boolean }[] = [
+  { t: "I'm", bold: false },
+  { t: 'Aishwari Sirur', bold: true },
+  { t: ', a CS major at', bold: false },
+  { t: 'UC Davis', bold: true },
+  { t: 'building at the intersection of', bold: false },
+  { t: 'AI, data, and product', bold: true },
+  { t: '. I turn models and messy data into things people can actually use — and I want to do it as an', bold: false },
+  { t: 'AI engineering intern', bold: true },
+  { t: 'this summer.', bold: false },
+];
+const heroWords = heroSegments.flatMap((seg) =>
+  seg.t.split(/\s+/).map((w) => ({ w, bold: seg.bold }))
+);
+---
+
+<Notebook>
+  <script is:inline>
+    // Enable the grey→ink hero scrub only with JS + motion allowed. Set before
+    // the hero parses so it renders grey (no flash); no-JS keeps full-ink text.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-hero');
+    }
+  </script>
+
+  <h1 class="sr-only">Aishwari Sirur — AI Engineer (summer 2026 internship candidate)</h1>
+
+  {/* In[1] — statement, pinned while scroll fills it in */}
+  <section class="hero-pin-wrap">
+   <div class="hero-pin">
+    <section class="cell">
+      <div class="cell-gutter">In[<span>1</span>]:</div>
+      <div class="cell-body">
+        <div class="celltag mono">whoami<span class="com">()  → identity</span></div>
+        <p class="prose lead" id="hero-statement">
+          {heroWords.map((hw, i) => (
+            <>
+              {i > 0 ? ' ' : ''}
+              <span class:list={['hero-word', { bold: hw.bold }]}>{hw.w}</span>
+            </>
+          ))}
+        </p>
+        <p class="comment-line">ai engineer · data science · product — available for summer 2026 internships</p>
+        <details class="peek">
+          <summary>source</summary>
+          <pre><span class="kw">def</span> <span class="fn">whoami</span>():
+    <span class="kw">return</span> Person(
+        name=<span class="str">"Aishwari Sirur"</span>,
+        school=<span class="str">"UC Davis — CS (Technology Management + Statistics)"</span>,
+        focus=[<span class="str">"AI engineering"</span>, <span class="str">"data science"</span>, <span class="str">"product"</span>],
+        now=[<span class="str">"LLM fine-tuning"</span>, <span class="str">"agentic workflows"</span>],
+        open_to=<span class="str">"summer 2026 internships"</span>,
+    )  <span class="com"># scroll for the work ↓</span></pre>
+        </details>
+      </div>
+    </section>
+   </div>
+  </section>
+
+  {/* Fig.1 — featured, rendered as output */}
+  {featured && (
+    <section class="cell" id="featured">
+      <div class="cell-gutter">Out[<span class="out">1</span>]:</div>
+      <div class="cell-body">
+        <div class="celltag mono"><span class="fn">render</span>(featured) — Fig.1</div>
+        <div class="figure">
+          <div class="figure-bar">
+            <span class="dots" aria-hidden="true">
+              <span class="dot" style="background:#ff5f56"></span>
+              <span class="dot" style="background:#ffbd2e"></span>
+              <span class="dot" style="background:#27c93f"></span>
+            </span>
+            <span>featured · {featured.data.categories.join(' · ')}</span>
+            <span class="caption">Fig.1</span>
+          </div>
+          <div class="figure-body">
+            <h2 class="figure-title">{featured.data.title}</h2>
+            <p class="figure-blurb">{featured.data.blurb}</p>
+
+            {/* authored output panel — a real summary readout, not a gradient */}
+            <div class="summary" aria-hidden="true">
+              <div><span class="prompt">In[*]:</span> project.summary()</div>
+              <dl>
+                <div><dt>metric</dt><dd><span class="num">{featured.data.metricValue}</span> — {featured.data.metricLabel}</dd></div>
+                <div><dt>timeline</dt><dd>{featured.data.timeline} · {featured.data.team}</dd></div>
+                <div><dt>stack</dt><dd>{featured.data.tools.join(' · ')}</dd></div>
+              </dl>
+            </div>
+
+            <div class="chips">
+              {featured.data.tools.map((s) => <span class="chip">{s}</span>)}
+            </div>
+
+            <div class="figure-actions">
+              <a href={`/project/${featured.id}`}>open case study <span class="arr">→</span></a>
+              {featured.data.href && (
+                <a href={featured.data.href} rel="noopener">live <span class="arr">↗</span></a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* In[2] — projects */}
+  {restProjects.length > 0 && (
+    <section class="cell" id="projects">
+      <div class="cell-gutter">In[<span>2</span>]:</div>
+      <div class="cell-body">
+        <div class="celltag celltag--row mono"><span><span class="fn">projects</span>.list(<span class="com">exclude=featured</span>)</span><a class="viewall" href="/projects">all {projects.length} →</a></div>
+        <div class="entries">
+          {restProjects.map((p, i) => (
+            <a class="entry" href={`/project/${p.id}`}>
+              <span class="entry-id">{idFor(p.data.categories, i + 2)}</span>
+              <span class="entry-main">
+                <span class="entry-title">
+                  {p.data.title}{' '}
+                  {p.data.href && <span class="arr">↗</span>}
+                </span>
+                <span class="entry-blurb">{p.data.blurb}</span>
+              </span>
+              <span class="entry-meta">{p.data.categories.join(' · ')}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* In[3] — experience (shortened; full list on /resume) */}
+  {experience.some((r) => r.highlight) && (
+    <section class="cell" id="experience">
+      <div class="cell-gutter">In[<span>3</span>]:</div>
+      <div class="cell-body">
+        <div class="celltag celltag--row mono"><span><span class="fn">experience</span>.highlights()</span><a class="viewall" href="/resume">full résumé →</a></div>
+        <div class="entries">
+          {experience.filter((r) => r.highlight).map((r) => (
+            <div class="entry entry--static entry--tight">
+              <span class="entry-id">▹</span>
+              <span class="entry-main">
+                <span class="entry-title">{r.role}</span>
+                <span class="entry-refs"><span class="venue">{r.org}</span>{r.location ? ` · ${r.location}` : ''}</span>
+              </span>
+              <span class="entry-meta">{r.period}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Out[] — contact */}
+  <section class="cell" id="contact">
+    <div class="cell-gutter">Out[<span class="out">∎</span>]:</div>
+    <div class="cell-body">
+      <div class="outcell">
+        <h2>Let's build something.</h2>
+        <p>Open to summer 2026 AI engineering internships — and always up to talk about anything above.</p>
+        <div class="outlinks">
+          <a href="/contact">send a message <span class="arr">→</span></a>
+          <a href="mailto:hello@example.com">email <span class="arr">→</span></a>
+          <a href="https://www.linkedin.com/in/REPLACE-ME" rel="noopener">linkedin <span class="arr">↗</span></a>
+          <a href="https://github.com/REPLACE-ME" rel="noopener">github <span class="arr">↗</span></a>
+          <a href="/resume">resume <span class="arr">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Notebook>
+
+<script>
+  // Pinned scroll-scrub: while the hero is pinned, map scroll progress through
+  // the runway to how many words have turned from grey to full ink. The pin
+  // (CSS position:sticky) holds the hero until progress hits 1, so you scroll
+  // through the whole statement before the rest of the site moves.
+  // rAF-throttled; passive listeners.
+  const wrap = document.querySelector<HTMLElement>('.hero-pin-wrap');
+  const hero = document.getElementById('hero-statement');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (wrap && hero && !reduce) {
+    const words = Array.from(hero.querySelectorAll('.hero-word'));
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const total = wrap.offsetHeight - window.innerHeight; // scrollable while pinned
+      const scrolled = Math.min(total, Math.max(0, -wrap.getBoundingClientRect().top));
+      const p = total > 0 ? scrolled / total : 1;
+      const n = Math.round(p * words.length);
+      for (let i = 0; i < words.length; i++) words[i].classList.toggle('lit', i < n);
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+</script>

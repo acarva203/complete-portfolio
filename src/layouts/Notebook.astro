@@ -1,0 +1,159 @@
+---
+/*
+  ============================ DIRECTION CONTRACT ============================
+  THESIS: This portfolio is one executable notebook. Prose, code, and rendered
+    output interleave so software + research + side projects read as a single
+    line of reasoning. Refuses the dev-portfolio hero-and-grid and the
+    clean-minimal whitespace template.
+  OWN-WORLD: Cool technical paper ground (#F6F7F9, faint engineering grid) with
+    white cells and contrasting dark "output" blocks (#16181D). JetBrains Mono
+    carries all notebook chrome — In[n]:/Out[n]: prompts (fuchsia), Fig.N
+    counters, nav, metadata, entry IDs. Hanken Grotesk for reading prose.
+    Disciplined syntax palette: fuchsia prompt, emerald string, amber output,
+    blue link. Recognizable with content removed by the prompt gutter +
+    numbered cells + dark output figures.
+  STORY: A recruiter/peer reads In[1] (who Aishwari is, the range), sees Fig.1
+    the featured work rendered as live output, scrolls numbered cells
+    (projects, research, writing) each demonstrating real artifacts, and reaches
+    the Out cell with resume + contact — leaving with the coherence and a step.
+  FIRST VIEWPORT: Mono masthead ("Aishwari Sirur ● notebook — kernel ready" +
+    nav/resume/contact). Then In[1]: whoami() statement in prose, and Fig.1 the
+    featured project as a dark output figure with an authored data panel.
+  FORM: Computational notebook — #1 of the derived list; committed. Chosen via
+    the structured-question channel (no networked roll / decision page).
+  ===========================================================================
+*/
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Aishwari Sirur — notebook',
+  description = 'Aishwari Sirur — AI engineering intern candidate. CS at UC Davis working across AI, data science, and product. Portfolio rendered as a notebook.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Set theme before paint — no flash. Saved choice wins; else follow OS.
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var dark = saved ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+        } catch (e) {}
+      })();
+    </script>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      // Enable scroll-reveal only when JS runs and motion is allowed. Set on
+      // <html> before paint so there is no flash of invisible cells.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-anim');
+      }
+    </script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead-in">
+        <a class="brand" href="/">
+          <span class="kernel-dot" aria-hidden="true"></span>
+          Aishwari&nbsp;Sirur
+          <span class="kernel-label">● notebook — kernel ready</span>
+        </a>
+        <nav class="nav" aria-label="Sections">
+          <a class="hide-sm" href="/projects">projects</a>
+          <a class="hide-sm" href="/log">log</a>
+          <a class="cta" href="/resume">resume</a>
+          <a class="cta kw" href="/contact">contact →</a>
+          <button class="theme-toggle" type="button" aria-label="Toggle dark mode" data-theme-toggle>
+            <span class="glyph" aria-hidden="true">◐</span> <span data-theme-label>dark</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <slot />
+      <footer class="foot">
+        <span>© 2025 Aishwari Sirur — rendered as a notebook.</span>
+        <span class="com"># built with Astro · aishwari sirur — ai engineer</span>
+      </footer>
+    </main>
+
+    <script is:inline>
+      // Theme toggle. Label shows the action (what a click switches TO).
+      (function () {
+        var root = document.documentElement;
+        var btn = document.querySelector('[data-theme-toggle]');
+        var label = document.querySelector('[data-theme-label]');
+        function sync() {
+          var dark = root.getAttribute('data-theme') === 'dark';
+          if (label) label.textContent = dark ? 'light' : 'dark';
+        }
+        sync();
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var dark = root.getAttribute('data-theme') === 'dark';
+            if (dark) root.removeAttribute('data-theme');
+            else root.setAttribute('data-theme', 'dark');
+            try { localStorage.setItem('theme', dark ? 'light' : 'dark'); } catch (e) {}
+            sync();
+          });
+        }
+      })();
+    </script>
+    <script>
+      // Native notebook motion: cells "execute" (reveal) as they scroll in,
+      // orchestrated once. Respects reduced-motion via CSS; here we just add the
+      // run class. If IO is unavailable, everything is visible by default.
+      const cells = document.querySelectorAll('.cell');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!('IntersectionObserver' in window) || reduce) {
+        cells.forEach((c) => c.classList.add('run'));
+      } else {
+        // Reveal anything already in the first viewport synchronously — no
+        // above-the-fold flash — then observe the rest.
+        const vh = window.innerHeight;
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                (e.target as HTMLElement).classList.add('run');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        cells.forEach((c) => {
+          if (c.getBoundingClientRect().top < vh * 0.9) c.classList.add('run');
+          else io.observe(c);
+        });
+        // safety: reveal anything still hidden after load
+        window.addEventListener('load', () =>
+          setTimeout(() => cells.forEach((c) => c.classList.add('run')), 1200)
+        );
+      }
+    </script>
+  </body>
+</html>
