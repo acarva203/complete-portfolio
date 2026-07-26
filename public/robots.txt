@@ -1,0 +1,7 @@
+# Aishwari Sirur — portfolio
+# Everything here is public and meant to be read, including by crawlers and AI agents.
+User-agent: *
+Allow: /
+
+# LLM-readable candidate summary:
+# https://aishwarisirur.com/llms.txt
