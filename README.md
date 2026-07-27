@@ -1,8 +1,12 @@
 # Aishwari Sirur — portfolio
 
-A personal portfolio rendered as one **computational notebook**. Built with
-[Astro](https://astro.build); static, zero-JS-by-default. Design world is
-documented in [`DESIGN.md`](./DESIGN.md); product truth in [`PRODUCT.md`](./PRODUCT.md).
+A personal portfolio for an **AI engineer**, rendered as one **computational
+notebook** — cells, `In[]`/`Out[]` prompts, output figures, and a
+syntax-highlight color system. Built with [Astro](https://astro.build): static,
+zero-JS-by-default, light/dark themes.
+
+- Product truth: [`PRODUCT.md`](./PRODUCT.md)
+- Visual world / design system: [`DESIGN.md`](./DESIGN.md)
 
 ## Develop
 
@@ -13,43 +17,53 @@ npm run build    # -> dist/
 npm run preview  # serve the build locally
 ```
 
-## Content
+## Pages
 
-Content lives in `src/content/` as Markdown with frontmatter:
+| Route | What it is |
+|---|---|
+| `/` | Home — pinned grey→ink hero scrub, featured project, projects, experience highlights, contact CTA |
+| `/projects` | Full project list |
+| `/project/[slug]` | Case-study page per project |
+| `/resume` | Education, skills, full experience timeline, + PDF download |
+| `/log` | Running updates feed + weekly/monthly goal progress bars |
+| `/contact` | Contact form (emails via Web3Forms) |
 
-- `projects/*.md` — `title, kind (engineering|research|side-project), year, blurb, stack[], href?, featured, order`
-- `research/*.md` — `title, venue, year, authors, blurb, href?, order`
-- `writing/*.md` — `title, date, blurb, readingTime?, order`
+## Content & data
 
-Add a post by dropping in a new `.md` file. Set `synthetic: false` once it's
-real content. The homepage shows a lean set; `/projects`, `/research`, and
-`/writing` list everything.
+Markdown collections (add an entry = drop in a new `.md` file):
 
-> **Current content is synthetic placeholder** (`synthetic: true`). Replace
-> before publishing — see the frontmatter of each file and swap the contact
-> links in `src/layouts/Notebook.astro` + `src/pages/index.astro`.
+- `src/content/projects/*.md` — `title, blurb, categories[], metricValue, metricLabel, timeline, team, tools[], href?, featured, order`
+- `src/content/updates/*.md` — `date, title, tag (building|learning|reading|shipping|thinking)` + markdown body
 
-Substack writing feed (RSS) is planned — the `/writing` index notes it.
+Typed data files (edit the array):
+
+- `src/data/experience.ts` — roles; `highlight: true` surfaces a role on the homepage
+- `src/data/goals.ts` — grouped goals with `progress` (0–100) → the `/log` progress bars
+
+## Contact form (Web3Forms)
+
+The `/contact` form posts to [Web3Forms](https://web3forms.com) (free, no backend).
+Get an access key (enter your email on their site), then either:
+
+- set `PUBLIC_WEB3FORMS_KEY` in a `.env` file or your Vercel env vars, **or**
+- replace `YOUR_WEB3FORMS_ACCESS_KEY` in `src/pages/contact.astro`.
+
+Until a real key is set, the form renders but submissions return an error.
+
+## Before publishing — replace these placeholders
+
+- **Web3Forms key** (above)
+- **Contact links** — email, LinkedIn, GitHub in `src/pages/contact.astro`, `src/pages/index.astro`
+- **Resume PDF** — `public/resume.pdf` (currently a placeholder)
+- **Domain** — `site:` in `astro.config.mjs`, and the URLs in `public/llms.txt` / `public/robots.txt`
 
 ## Deploy to Vercel
 
 Vercel auto-detects Astro (build `astro build`, output `dist/`) — no config needed.
+Import the repo at [vercel.com/new](https://vercel.com/new); every push to `main`
+auto-deploys. Set the real domain in `astro.config.mjs` first.
 
-**Option A — Git (recommended):**
+## Machine-readable
 
-1. Push this repo to GitHub/GitLab/Bitbucket.
-2. In the [Vercel dashboard](https://vercel.com/new), "Import Project" and pick the repo.
-3. Accept the detected Astro settings and deploy. Every push auto-deploys.
-
-**Option B — CLI:**
-
-```bash
-npm i -g vercel        # once
-vercel                 # preview deploy (prompts you to log in first)
-vercel --prod          # production deploy
-```
-
-The CLI login is interactive — run it yourself in your terminal (e.g. type
-`! vercel` in this session), since it requires your Vercel account.
-
-Set your real domain in `astro.config.mjs` (`site:`) before the production deploy.
+- `public/llms.txt` — a structured candidate summary for LLMs / AI agents
+- `public/robots.txt` — welcomes crawlers, points to `llms.txt`
