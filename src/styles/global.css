@@ -25,7 +25,7 @@
   --syn-fn: #2563eb;   /* function / link */
   --syn-com: #94a3b8;  /* comment */
   --syn-str-text: #047857; /* darker green for green TEXT on light (AA) */
-  --grid: rgba(27, 30, 36, 0.045); /* faint graph-paper lines */
+  --grid: rgba(27, 30, 36, 0.022); /* whisper-faint graph-paper lines */
 
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -59,7 +59,7 @@
   --syn-fn: #60a5fa;
   --syn-com: #64748b;
   --syn-str-text: #34d399; /* already bright enough on the dark ground */
-  --grid: rgba(231, 234, 240, 0.05);
+  --grid: rgba(231, 234, 240, 0.028);
 
   color-scheme: dark;
 }
@@ -309,6 +309,36 @@ h1,h2,h3 { font-family: var(--sans); font-weight: 700; letter-spacing: -0.02em; 
 .entry--static { cursor: default; }
 .entry--static:hover { background: transparent; }
 .entry--tight { padding: 0.8rem 0; align-items: center; }
+.entry-tools { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 0.45rem; }
+
+/* ---- experience accordion (expandable roles) ---- */
+.xp { border-top: 1px solid var(--rule); }
+.xp-item { border-bottom: 1px solid var(--rule); }
+.xp-summary {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1rem;
+  padding: 1rem 0; cursor: pointer; list-style: none;
+}
+.xp-summary::-webkit-details-marker { display: none; }
+.xp-summary:hover .xp-role { color: var(--syn-fn); }
+.xp-num { flex: 0 0 auto; font-size: 12px; color: var(--syn-kw); padding-top: 0.15rem; }
+.xp-head { flex: 1 1 12rem; min-width: 0; }
+.xp-role { font-weight: 700; font-size: 1.12rem; letter-spacing: -0.015em; }
+.xp-org { display: block; font-size: 12px; color: var(--muted); margin-top: 0.15rem; }
+.xp-period { flex: 0 0 auto; margin-left: auto; font-size: 12px; color: var(--muted); padding-top: 0.15rem; }
+.xp-toggle { flex: 0 0 auto; font-size: 18px; line-height: 1; color: var(--syn-num); padding-top: 0.1rem; transition: transform 0.2s ease; }
+.xp-item[open] .xp-toggle { transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) { .xp-toggle { transition: none; } }
+.xp-body { padding: 0 0 1.2rem 2.2rem; }
+.xp-points { margin: 0.1rem 0 0; padding-left: 1.1rem; color: var(--ink-soft); }
+.xp-points li { margin: 0.3rem 0; }
+.xp-body .chips { margin-top: 0.85rem; }
+
+/* ---- tech-stack showcase (homepage) ---- */
+.stack-chips { gap: 0.5rem; }
+
+/* ---- prominent metric on the featured figure ---- */
+.figure-stat { font-family: var(--mono); font-size: 0.95rem; color: var(--ink-inv-soft); margin: 0.15rem 0 0.7rem; }
+.figure-stat .num { color: var(--syn-num); font-size: 1.5rem; font-weight: 700; margin-right: 0.35rem; }
 .entry-id { font-family: var(--mono); font-size: 12px; color: var(--syn-kw); white-space: nowrap; padding-top: 0.15rem; }
 .entry-main { min-width: 0; }
 .entry-title { font-size: 1.18rem; font-weight: 700; letter-spacing: -0.015em; }

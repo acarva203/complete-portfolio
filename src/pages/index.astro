@@ -2,6 +2,8 @@
 import Notebook from '../layouts/Notebook.astro';
 import { getCollection } from 'astro:content';
 import { experience } from '../data/experience';
+import ExperienceList from '../components/ExperienceList.astro';
+import { stack } from '../data/skills';
 
 const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.order - b.data.order
@@ -97,6 +99,7 @@ const heroWords = heroSegments.flatMap((seg) =>
           </div>
           <div class="figure-body">
             <h2 class="figure-title">{featured.data.title}</h2>
+            <p class="figure-stat"><span class="num">{featured.data.metricValue}</span> {featured.data.metricLabel}</p>
             <p class="figure-blurb">{featured.data.blurb}</p>
 
             {/* authored output panel — a real summary readout, not a gradient */}
@@ -117,6 +120,9 @@ const heroWords = heroSegments.flatMap((seg) =>
               <a href={`/project/${featured.id}`}>open case study <span class="arr">→</span></a>
               {featured.data.href && (
                 <a href={featured.data.href} rel="noopener">live <span class="arr">↗</span></a>
+              )}
+              {featured.data.repo && (
+                <a href={featured.data.repo} rel="noopener">code <span class="arr">↗</span></a>
               )}
             </div>
           </div>
@@ -141,6 +147,9 @@ const heroWords = heroSegments.flatMap((seg) =>
                   {p.data.href && <span class="arr">↗</span>}
                 </span>
                 <span class="entry-blurb">{p.data.blurb}</span>
+                {p.data.tools.length > 0 && (
+                  <span class="entry-tools mono">{p.data.tools.slice(0, 4).join(' · ')}</span>
+                )}
               </span>
               <span class="entry-meta">{p.data.categories.join(' · ')}</span>
             </a>
@@ -150,24 +159,24 @@ const heroWords = heroSegments.flatMap((seg) =>
     </section>
   )}
 
-  {/* In[3] — experience (shortened; full list on /resume) */}
+  {/* In[3] — tech-stack showcase */}
+  <section class="cell" id="stack">
+    <div class="cell-gutter">In[<span>3</span>]:</div>
+    <div class="cell-body">
+      <div class="celltag mono"><span class="fn">stack</span>  <span class="com"># tools I reach for</span></div>
+      <div class="chips chips--light stack-chips">
+        {stack.map((s) => <span class="chip">{s}</span>)}
+      </div>
+    </div>
+  </section>
+
+  {/* In[4] — experience (expandable; full list on /resume) */}
   {experience.some((r) => r.highlight) && (
     <section class="cell" id="experience">
-      <div class="cell-gutter">In[<span>3</span>]:</div>
+      <div class="cell-gutter">In[<span>4</span>]:</div>
       <div class="cell-body">
         <div class="celltag celltag--row mono"><span><span class="fn">experience</span>.highlights()</span><a class="viewall" href="/resume">full résumé →</a></div>
-        <div class="entries">
-          {experience.filter((r) => r.highlight).map((r) => (
-            <div class="entry entry--static entry--tight">
-              <span class="entry-id">▹</span>
-              <span class="entry-main">
-                <span class="entry-title">{r.role}</span>
-                <span class="entry-refs"><span class="venue">{r.org}</span>{r.location ? ` · ${r.location}` : ''}</span>
-              </span>
-              <span class="entry-meta">{r.period}</span>
-            </div>
-          ))}
-        </div>
+        <ExperienceList roles={experience.filter((r) => r.highlight)} />
       </div>
     </section>
   )}

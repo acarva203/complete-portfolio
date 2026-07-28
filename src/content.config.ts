@@ -15,6 +15,7 @@ const projects = defineCollection({
     team: z.string(),                // e.g. "10 members" / "12 students + PI"
     tools: z.array(z.string()).default([]),
     href: z.string().optional(),     // external live link (renders with ↗)
+    repo: z.string().optional(),     // source repository (renders a "code ↗" link)
     featured: z.boolean().default(false),
     order: z.number().default(0),
   }),

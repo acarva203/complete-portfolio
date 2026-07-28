@@ -1,21 +1,8 @@
 ---
 import Notebook from '../layouts/Notebook.astro';
 import { experience } from '../data/experience';
-
-const skills = [
-  {
-    group: 'AI / ML & Data',
-    items: ['Python', 'Scikit-Learn', 'Machine Learning', 'Statistics', 'Geospatial Data', 'Tableau', 'LLM fine-tuning (learning)', 'Agentic workflows (exploring)'],
-  },
-  {
-    group: 'Product',
-    items: ['Figma', 'Notion', 'Qualtrics', 'User Interviews', 'Roadmapping', 'Workflow Automation'],
-  },
-  {
-    group: 'Design & Front-end',
-    items: ['UI/UX', 'Prototyping', 'Design Systems', 'Usability Testing', 'React'],
-  },
-];
+import { skills } from '../data/skills';
+import ExperienceList from '../components/ExperienceList.astro';
 ---
 
 <Notebook
@@ -75,19 +62,7 @@ const skills = [
     <div class="cell-gutter">In[<span>4</span>]:</div>
     <div class="cell-body">
       <div class="celltag mono"><span class="fn">experience</span>.timeline()</div>
-      <div class="entries">
-        {experience.map((r) => (
-          <div class="entry entry--static">
-            <span class="entry-id">▹</span>
-            <span class="entry-main">
-              <span class="entry-title">{r.role}</span>
-              <span class="entry-refs"><span class="venue">{r.org}</span>{r.location ? ` · ${r.location}` : ''}</span>
-              <span class="entry-blurb">{r.points.join(' · ')}</span>
-            </span>
-            <span class="entry-meta">{r.period}</span>
-          </div>
-        ))}
-      </div>
+      <ExperienceList roles={experience} open />
     </div>
   </section>
 

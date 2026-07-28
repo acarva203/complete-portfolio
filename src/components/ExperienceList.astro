@@ -1,0 +1,35 @@
+---
+import type { Role } from '../data/experience';
+
+interface Props {
+  roles: Role[];
+  open?: boolean; // default-expanded (used on /resume)
+}
+const { roles, open = false } = Astro.props;
+---
+
+<div class="xp">
+  {roles.map((r, i) => (
+    <details class="xp-item" open={open}>
+      <summary class="xp-summary">
+        <span class="xp-num mono">{String(i + 1).padStart(2, '0')}</span>
+        <span class="xp-head">
+          <span class="xp-role">{r.role}</span>
+          <span class="xp-org mono"><span class="venue">{r.org}</span>{r.location ? ` · ${r.location}` : ''}</span>
+        </span>
+        <span class="xp-period mono">{r.period}</span>
+        <span class="xp-toggle mono" aria-hidden="true">+</span>
+      </summary>
+      <div class="xp-body">
+        <ul class="xp-points">
+          {r.points.map((p) => <li>{p}</li>)}
+        </ul>
+        {r.tools && r.tools.length > 0 && (
+          <div class="chips chips--light">
+            {r.tools.map((t) => <span class="chip">{t}</span>)}
+          </div>
+        )}
+      </div>
+    </details>
+  ))}
+</div>

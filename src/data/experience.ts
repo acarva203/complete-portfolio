@@ -4,6 +4,7 @@ export interface Role {
   period: string;
   location?: string;
   points: string[];
+  tools?: string[]; // shown as chips when the role is expanded
   highlight?: boolean; // surfaced in the shortened homepage list
 }
 
@@ -14,6 +15,7 @@ export const experience: Role[] = [
     org: 'Verazoi (PLASMA Accelerator)',
     period: 'Feb 2026 – Present',
     highlight: true,
+    tools: ['Qualtrics', 'Calendly', 'User Interviews'],
     points: [
       'Conducting customer research interviews and distributing research surveys.',
       'Built a workflow automating interview scheduling with Qualtrics and Calendly.',
@@ -25,6 +27,7 @@ export const experience: Role[] = [
     period: 'Jan 2026 – Present',
     location: 'UC Davis',
     highlight: true,
+    tools: ['Python', 'Qualtrics', 'Qualitative Analysis'],
     points: [
       'Processed and cleaned survey data from 500+ college students to measure AI attitude shifts.',
       'Transcribed and analyzed qualitative interviews assessing AI tools’ impact on student writing.',
@@ -51,6 +54,7 @@ export const experience: Role[] = [
     org: 'AI4ALL',
     period: 'Aug 2025 – Present',
     highlight: true,
+    tools: ['Python', 'Machine Learning', 'Scikit-Learn'],
     points: [
       'Prototyped a machine learning algorithm to optimize wind farm location in the U.S.',
     ],
@@ -60,6 +64,7 @@ export const experience: Role[] = [
     org: 'AI Student Collective',
     period: 'Oct 2025 – Present',
     highlight: true,
+    tools: ['React', 'TypeScript'],
     points: [
       'Developing a “Devpost” for middle and high school hackathons in Sacramento & the Bay Area.',
       'Mentored a high school hackathon — user research with next-gen builders.',
