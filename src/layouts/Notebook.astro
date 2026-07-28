@@ -75,11 +75,17 @@ const {
   <body>
     <header class="masthead">
       <div class="masthead-in">
-        <a class="brand" href="/">
-          <span class="kernel-dot" aria-hidden="true"></span>
-          Aishwari&nbsp;Sirur
-          <span class="kernel-label">● notebook — kernel ready</span>
-        </a>
+        <div class="brand">
+          <button
+            class="kernel-dot"
+            type="button"
+            aria-label="Restart kernel"
+            title="Restart kernel"
+            data-kernel-restart
+          ></button>
+          <a class="brand-link" href="/">Aishwari&nbsp;Sirur</a>
+          <span class="kernel-label" data-kernel-label>● notebook — kernel ready</span>
+        </div>
         <nav class="nav" aria-label="Sections">
           <a class="hide-sm" href="/projects">projects</a>
           <a class="hide-sm" href="/log">log</a>
@@ -120,6 +126,99 @@ const {
             sync();
           });
         }
+      })();
+    </script>
+    <script is:inline>
+      // Easter eggs — two, both leaning into the notebook-as-REPL fiction.
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // 1) Click the "kernel ready" dot to restart the kernel.
+        var dot = document.querySelector('[data-kernel-restart]');
+        var label = document.querySelector('[data-kernel-label]');
+        var restarting = false;
+        if (dot) {
+          dot.addEventListener('click', function () {
+            if (restarting) return;
+            restarting = true;
+            dot.classList.add('restarting');
+            if (label) label.textContent = '● restarting kernel…';
+            window.setTimeout(function () {
+              dot.classList.remove('restarting');
+              if (label) label.textContent = '● notebook — kernel ready';
+              restarting = false;
+            }, reduce ? 500 : 1400);
+          });
+        }
+
+        // 2) Type a command anywhere to run a hidden REPL cell.
+        var COMMANDS = {
+          whoami: 'aishwari sirur — ai engineer · cs @ uc davis · open to summer 2026',
+          ls: 'projects/  log/  resume.pdf  contact/',
+          help: "commands: whoami · ls · sudo hire · help  (esc to dismiss)",
+          'sudo hire': ['permission granted → ', 'get in touch', '/contact'],
+        };
+        var buf = '';
+        var clearTimer = null;
+        var toast = null;
+        var hideTimer = null;
+
+        function ensureToast() {
+          if (toast) return toast;
+          toast = document.createElement('div');
+          toast.className = 'repl-toast';
+          toast.setAttribute('role', 'status');
+          toast.setAttribute('aria-live', 'polite');
+          document.body.appendChild(toast);
+          return toast;
+        }
+
+        function run(cmd) {
+          var out = COMMANDS[cmd];
+          var t = ensureToast();
+          var outHtml;
+          if (Array.isArray(out)) {
+            outHtml = out[0] + '<a href="' + out[2] + '">' + out[1] + '</a>';
+          } else {
+            outHtml = out;
+          }
+          t.innerHTML =
+            '<div class="repl-in">&gt;&gt;&gt; <b>' + cmd + '</b></div>' +
+            '<div class="repl-out">' + outHtml + '</div>';
+          // reflow so the transition runs even on rapid re-trigger
+          void t.offsetWidth;
+          t.classList.add('show');
+          if (hideTimer) window.clearTimeout(hideTimer);
+          hideTimer = window.setTimeout(hide, 5000);
+        }
+
+        function hide() {
+          if (toast) toast.classList.remove('show');
+        }
+
+        function typingInField(el) {
+          if (!el) return false;
+          var tag = el.tagName;
+          return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
+        }
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { hide(); buf = ''; return; }
+          if (typingInField(e.target)) return;
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          if (e.key && e.key.length === 1 && /[a-z ]/i.test(e.key)) {
+            buf = (buf + e.key.toLowerCase()).slice(-24);
+            if (clearTimer) window.clearTimeout(clearTimer);
+            clearTimer = window.setTimeout(function () { buf = ''; }, 2000);
+            for (var cmd in COMMANDS) {
+              if (COMMANDS.hasOwnProperty(cmd) && buf.slice(-cmd.length) === cmd) {
+                run(cmd);
+                buf = '';
+                break;
+              }
+            }
+          }
+        });
       })();
     </script>
     <script>

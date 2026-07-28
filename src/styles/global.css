@@ -129,9 +129,34 @@ a:hover { text-decoration-color: var(--syn-fn); }
   margin: 0 auto; padding: 0.7rem 1.25rem;
   display: flex; align-items: center; gap: 1rem; justify-content: space-between;
 }
-.brand { display: flex; align-items: center; gap: 0.55rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
-.kernel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--syn-str); box-shadow: 0 0 0 3px color-mix(in srgb, var(--syn-str) 20%, transparent); }
+.brand { display: flex; align-items: center; gap: 0.55rem; }
+.brand-link { font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+.kernel-dot {
+  width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--syn-str); cursor: pointer;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--syn-str) 20%, transparent);
+}
+.kernel-dot.restarting { background: var(--syn-num); box-shadow: 0 0 0 3px color-mix(in srgb, var(--syn-num) 22%, transparent); animation: kernel-pulse 0.45s ease-in-out 3; }
+@keyframes kernel-pulse { 50% { transform: scale(1.7); opacity: 0.55; } }
 .kernel-label { color: var(--muted); font-weight: 400; }
+@media (prefers-reduced-motion: reduce) { .kernel-dot.restarting { animation: none; } }
+
+/* REPL easter egg — a dark "Out" figure that pops in when you type a command */
+.repl-toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(0.5rem);
+  z-index: 60; max-width: min(92vw, 34rem);
+  background: var(--code-bg); color: var(--ink-inv);
+  border: 1px solid var(--rule-dark); border-radius: 10px;
+  padding: 0.75rem 1rem; font-family: var(--mono); font-size: 13px; line-height: 1.55;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.28); opacity: 0; pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.repl-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.repl-toast .repl-in { color: color-mix(in srgb, var(--ink-inv) 62%, transparent); }
+.repl-toast .repl-in b { color: var(--syn-kw); font-weight: 500; }
+.repl-toast .repl-out { color: var(--syn-num); margin-top: 0.15rem; }
+.repl-toast .repl-out a { color: var(--syn-fn); text-decoration: underline; text-underline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .repl-toast { transition: opacity 0.22s ease; transform: translateX(-50%); } .repl-toast.show { transform: translateX(-50%); } }
 .nav { display: flex; align-items: center; gap: 1.1rem; }
 .nav a { color: var(--muted); text-decoration: none; padding: 0.45rem 0; display: inline-flex; align-items: center; }
 .nav a:hover { color: var(--ink); }
