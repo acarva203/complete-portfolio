@@ -76,8 +76,10 @@ detail.
 
 ## Contact
 
-See the contact section at https://aishwarisirur.com/#contact for email,
-LinkedIn, GitHub, and resume.
+- Email: asirur@ucdavis.edu
+- LinkedIn: https://www.linkedin.com/in/aishwari-sirur
+- GitHub: https://github.com/acarva203
+- Contact form: /contact
 
-<!-- NOTE for the site owner: update the domain above and fill real
-     email / LinkedIn / GitHub links once set. -->
+<!-- NOTE for the site owner: update the placeholder domain in astro.config.mjs
+     and robots.txt once your custom domain is set. -->
