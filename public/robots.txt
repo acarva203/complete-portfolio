@@ -4,4 +4,4 @@ User-agent: *
 Allow: /
 
 # LLM-readable candidate summary:
-# https://aishwarisirur.com/llms.txt
+# https://complete-portfolio-psi.vercel.app/llms.txt
